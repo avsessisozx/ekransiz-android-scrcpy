@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EkranÄ± Olmayan Android Telefonu PC'den Kontrol Etmek â€” adb + scrcpy (Redmi Note 10 Pro / OrangeFox)</title>
-<meta name="description" content="AdÄ±m adÄ±m rehber: ekranÄ± olmayan Android telefonu PC'den adb ve scrcpy ile kontrol etmek. Boot'ta adb'yi aÃ§an init script, adb_keys, FLAG_SECURE kilit ekranÄ± ve yeniden baÅŸlatmalarda kalÄ±cÄ±lÄ±k.">
-<meta name="keywords" content="scrcpy, adb, ekranÄ± kÄ±rÄ±k telefon, ekranÄ± olmayan android, Redmi Note 10 Pro, sweet, M2101K6G, OrangeFox, adb_enabled, init rc, adb_keys, FLAG_SECURE, locksettings">
+<title>Ekranı Olmayan Android Telefonu PC'den Kontrol Etmek — adb + scrcpy (Redmi Note 10 Pro / OrangeFox)</title>
+<meta name="description" content="Adım adım rehber: ekranı olmayan Android telefonu PC'den adb ve scrcpy ile kontrol etmek. Boot'ta adb'yi açan init script, adb_keys, FLAG_SECURE kilit ekranı ve yeniden başlatmalarda kalıcılık.">
+<meta name="keywords" content="scrcpy, adb, ekranı kırık telefon, ekranı olmayan android, Redmi Note 10 Pro, sweet, M2101K6G, OrangeFox, adb_enabled, init rc, adb_keys, FLAG_SECURE, locksettings">
 <link rel="canonical" href="https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/">
 <link rel="alternate" hreflang="en" href="https://avsessisozx.github.io/ekransiz-android-scrcpy/">
 <link rel="alternate" hreflang="tr" href="https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/">
@@ -15,12 +15,12 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "EkranÄ± Olmayan Android Telefonu PC'den Kontrol Etmek â€” adb + scrcpy",
-  "description": "EkranÄ± olmayan Redmi Note 10 Pro'yu PC'den kontrol etmek: OrangeFox recovery'de root adb, adb_keys, ve boot'ta adb_enabled=1 yapan init script.",
+  "headline": "Ekranı Olmayan Android Telefonu PC'den Kontrol Etmek — adb + scrcpy",
+  "description": "Ekranı olmayan Redmi Note 10 Pro'yu PC'den kontrol etmek: OrangeFox recovery'de root adb, adb_keys, ve boot'ta adb_enabled=1 yapan init script.",
   "inLanguage": "tr",
   "datePublished": "2026-11-07",
   "dateModified": "2026-11-07",
-  "keywords": "scrcpy, adb, ekranÄ± kÄ±rÄ±k telefon, Redmi Note 10 Pro, sweet, M2101K6G, OrangeFox, adb_enabled, init rc, adb_keys",
+  "keywords": "scrcpy, adb, ekranı kırık telefon, Redmi Note 10 Pro, sweet, M2101K6G, OrangeFox, adb_enabled, init rc, adb_keys",
   "about": ["Android", "scrcpy", "adb", "OrangeFox recovery"],
   "mainEntityOfPage": "https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/"
 }
@@ -30,82 +30,82 @@
 <main>
 <nav class="lang"><a href="../">English</a></nav>
 
-<h1>EkranÄ± Olmayan Android Telefonu PC'den Kontrol Etmek â€” adb + scrcpy</h1>
-<p class="meta">Redmi Note 10 Pro (<code>sweet</code> / <code>M2101K6G</code>) Â· OrangeFox R12.1_3 Â· Android 13 Â· 2026-11-07</p>
+<h1>Ekranı Olmayan Android Telefonu PC'den Kontrol Etmek — adb + scrcpy</h1>
+<p class="meta">Redmi Note 10 Pro (<code>sweet</code> / <code>M2101K6G</code>) · OrangeFox R12.1_3 · Android 13 · 2026-11-07</p>
 
-<p><strong>Kapsam:</strong> kendi cihazÄ±nÄ±z veya yetkili olduÄŸunuz cihazlar. Bu yÃ¶ntem kilit ekranÄ± kimlik bilgisini atlamaz; yalnÄ±zca fiziksel ekranÄ± olmayan cihaza etkileÅŸim penceresi aÃ§ar.</p>
+<p><strong>Kapsam:</strong> kendi cihazınız veya yetkili olduğunuz cihazlar. Bu yöntem kilit ekranı kimlik bilgisini atlamaz; yalnızca fiziksel ekranı olmayan cihaza etkileşim penceresi açar.</p>
 
-<h2>Ã–zet</h2>
-<p>Ekran paneli fiziksel olarak sÃ¶kÃ¼lmÃ¼ÅŸ bir telefonu PC'den kullanmak iÃ§in <strong>adb</strong> + <strong>scrcpy</strong> yeterlidir. Zor olan kÄ±sÄ±m scrcpy deÄŸil; ROM'un her aÃ§Ä±lÄ±ÅŸta USB hata ayÄ±klamayÄ± kapatmasÄ± ve ekran olmadÄ±ÄŸÄ± iÃ§in â€œAllow USB debuggingâ€ diyaloÄŸuna basÄ±lamamasÄ±dÄ±r.</p>
-<p>Bu yazÄ±, Redmi Note 10 Pro Ã¼zerinde tÃ¼m yolu gÃ¶steriyor:</p>
+<h2>Özet</h2>
+<p>Ekran paneli fiziksel olarak sökülmüş bir telefonu PC'den kullanmak için <strong>adb</strong> + <strong>scrcpy</strong> yeterlidir. Zor olan kısım scrcpy değil; ROM'un her açılışta USB hata ayıklamayı kapatması ve ekran olmadığı için “Allow USB debugging” diyaloğuna basılamamasıdır.</p>
+<p>Bu yazı, Redmi Note 10 Pro üzerinde tüm yolu gösteriyor:</p>
 <ol>
 <li>OrangeFox recovery'de root adb (<code>ro.adb.secure=0</code>),</li>
-<li>PC anahtarÄ±nÄ± <code>/data/misc/adb/adb_keys</code> dosyasÄ±na Ã¶nceden yazma,</li>
-<li><code>settings_global.xml</code> dÃ¼zenlemesinin neden kalÄ±cÄ± olmadÄ±ÄŸÄ± (ROM dosyayÄ± aÃ§Ä±lÄ±ÅŸta yeniden yazÄ±yor),</li>
-<li>Ã§Ã¶zÃ¼m: <code>/system/etc/init</code> altÄ±nda <code>sys.boot_completed</code> anÄ±nda <code>adb_enabled=1</code> yapan bir <strong>init script</strong>,</li>
-<li>USB Ã¼zerinden scrcpy.</li>
+<li>PC anahtarını <code>/data/misc/adb/adb_keys</code> dosyasına önceden yazma,</li>
+<li><code>settings_global.xml</code> düzenlemesinin neden kalıcı olmadığı (ROM dosyayı açılışta yeniden yazıyor),</li>
+<li>çözüm: <code>/system/etc/init</code> altında <code>sys.boot_completed</code> anında <code>adb_enabled=1</code> yapan bir <strong>init script</strong>,</li>
+<li>USB üzerinden scrcpy.</li>
 </ol>
-<p>SonuÃ§: her aÃ§Ä±lÄ±ÅŸtan ~20 saniye sonra adb geri gelir; kablo takÄ±lÄ± olduÄŸu sÃ¼rece PC'den gÃ¶rÃ¼ntÃ¼ ve kontrol mÃ¼mkÃ¼ndÃ¼r.</p>
+<p>Sonuç: her açılıştan ~20 saniye sonra adb geri gelir; kablo takılı olduğu sürece PC'den görüntü ve kontrol mümkündür.</p>
 
 <h2>1. Problem</h2>
-<p>Ekran montajÄ± fiziksel olarak yok; dolayÄ±sÄ±yla dokunmatik de yok. Telefon Android'e aÃ§Ä±ldÄ±ÄŸÄ±nda USB'de yalnÄ±zca MTP olarak gÃ¶rÃ¼nÃ¼yor (<code>VID_2717&amp;PID_FF40</code>) â€” ADB arayÃ¼zÃ¼ yok. Kilit ekranÄ± desenli ve <code>FLAG_SECURE</code> olduÄŸu iÃ§in kimlik ekranÄ±nÄ±n gÃ¶rÃ¼ntÃ¼sÃ¼ alÄ±namÄ±yor.</p>
-<p>Hedef: telefonu normal kullanÄ±ma dÃ¶ndÃ¼rmek ve PC'den kontrol etmek.</p>
+<p>Ekran montajı fiziksel olarak yok; dolayısıyla dokunmatik de yok. Telefon Android'e açıldığında USB'de yalnızca MTP olarak görünüyor (<code>VID_2717&amp;PID_FF40</code>) — ADB arayüzü yok. Kilit ekranı desenli ve <code>FLAG_SECURE</code> olduğu için kimlik ekranının görüntüsü alınamıyor.</p>
+<p>Hedef: telefonu normal kullanıma döndürmek ve PC'den kontrol etmek.</p>
 
-<h2>2. Cihaz profili (bu iÅŸi mÃ¼mkÃ¼n kÄ±lan Ã¶zellikler)</h2>
+<h2>2. Cihaz profili (bu işi mümkün kılan özellikler)</h2>
 <table>
-<thead><tr><th>Ã–ÄŸe</th><th>DeÄŸer</th><th>Neden Ã¶nemli</th></tr></thead>
+<thead><tr><th>Öğe</th><th>Değer</th><th>Neden önemli</th></tr></thead>
 <tbody>
-<tr><td>Model</td><td><code>sweet</code> / <code>M2101K6G</code> (Redmi Note 10 Pro)</td><td>yol/PID eÅŸleÅŸmesi</td></tr>
+<tr><td>Model</td><td><code>sweet</code> / <code>M2101K6G</code> (Redmi Note 10 Pro)</td><td>yol/PID eşleşmesi</td></tr>
 <tr><td>Recovery</td><td>OrangeFox R12.1_3 (unofficial), VantomKernel 4.14.285</td><td>root adb, <code>ro.adb.secure=0</code></td></tr>
-<tr><td>Android</td><td>13 (<code>TQ3A.230901.001.B1</code>, userdebug)</td><td><code>ro.debuggable=1</code>, <code>adb root</code> Ã§alÄ±ÅŸÄ±r</td></tr>
-<tr><td>Bootloader</td><td>aÃ§Ä±k (<code>verifiedbootstate=orange</code>)</td><td><code>/system</code> yazÄ±labilir</td></tr>
-<tr><td>AVB / verity</td><td><strong>kapalÄ±</strong> (<code>vbmeta flags=0x3</code>)</td><td><code>/system</code> deÄŸiÅŸikliÄŸi gÃ¼venli</td></tr>
-<tr><td>Dinamik bÃ¶lÃ¼mler</td><td><code>dm-0</code> system, <code>dm-1</code> vendor, <code>dm-2</code> product, <code>dm-5</code> userdata</td><td>mount hedefleri</td></tr>
-<tr><td>USB config</td><td><code>sys.usb.config=mtp,adb</code> â†’ PID <code>FF48</code></td><td>ADB arayÃ¼zÃ¼nÃ¼ aÃ§ar</td></tr>
+<tr><td>Android</td><td>13 (<code>TQ3A.230901.001.B1</code>, userdebug)</td><td><code>ro.debuggable=1</code>, <code>adb root</code> çalışır</td></tr>
+<tr><td>Bootloader</td><td>açık (<code>verifiedbootstate=orange</code>)</td><td><code>/system</code> yazılabilir</td></tr>
+<tr><td>AVB / verity</td><td><strong>kapalı</strong> (<code>vbmeta flags=0x3</code>)</td><td><code>/system</code> değişikliği güvenli</td></tr>
+<tr><td>Dinamik bölümler</td><td><code>dm-0</code> system, <code>dm-1</code> vendor, <code>dm-2</code> product, <code>dm-5</code> userdata</td><td>mount hedefleri</td></tr>
+<tr><td>USB config</td><td><code>sys.usb.config=mtp,adb</code> → PID <code>FF48</code></td><td>ADB arayüzünü açar</td></tr>
 </tbody>
 </table>
-<p>Verity aÃ§Ä±k olsaydÄ± aynÄ± yÃ¶ntem doÄŸrudan Ã§alÄ±ÅŸmazdÄ±: Ã¶nce verity kapatÄ±lmalÄ± (Ã¶r. <code>avbctl disable-verity</code> / yamalÄ± vbmeta) ya da Magisk kullanÄ±lmalÄ±ydÄ±.</p>
+<p>Verity açık olsaydı aynı yöntem doğrudan çalışmazdı: önce verity kapatılmalı (ör. <code>avbctl disable-verity</code> / yamalı vbmeta) ya da Magisk kullanılmalıydı.</p>
 
-<h2>3. AraÃ§lar</h2>
+<h2>3. Araçlar</h2>
 <ul>
 <li><strong>adb</strong> (platform-tools)</li>
-<li><strong>scrcpy 5.0.1</strong> â€” ekran yansÄ±tma ve girdi</li>
-<li><strong>OrangeFox recovery</strong> â€” root adb ve <code>/system</code> eriÅŸimi</li>
-<li>standart Android shell araÃ§larÄ±: <code>avbctl</code>, <code>mount</code>, <code>settings</code>, <code>locksettings</code>, <code>input</code>, <code>screencap</code></li>
+<li><strong>scrcpy 5.0.1</strong> — ekran yansıtma ve girdi</li>
+<li><strong>OrangeFox recovery</strong> — root adb ve <code>/system</code> erişimi</li>
+<li>standart Android shell araçları: <code>avbctl</code>, <code>mount</code>, <code>settings</code>, <code>locksettings</code>, <code>input</code>, <code>screencap</code></li>
 </ul>
 
-<h2>4. AdÄ±m adÄ±m</h2>
+<h2>4. Adım adım</h2>
 
 <h3>4.1 Recovery'de root adb</h3>
-<p>Telefon kapalÄ±yken <strong>GÃ¼Ã§ + Ses AÃ§ma</strong> ile OrangeFox'a girilir. Recovery adbd'si <code>ro.adb.secure=0</code> ile Ã§alÄ±ÅŸtÄ±ÄŸÄ± iÃ§in her host root shell alÄ±r:</p>
+<p>Telefon kapalıyken <strong>Güç + Ses Açma</strong> ile OrangeFox'a girilir. Recovery adbd'si <code>ro.adb.secure=0</code> ile çalıştığı için her host root shell alır:</p>
 <pre><code>adb devices -l
 # db7ea5d1  recovery  product:sweet model:M2101K6G
 adb shell id
 # uid=0(root) ... context=u:r:su:s0</code></pre>
 
-<h3>4.2 /system'e dokunmadan Ã¶nce verity kontrolÃ¼</h3>
+<h3>4.2 /system'e dokunmadan önce verity kontrolü</h3>
 <pre><code>adb shell 'avbctl get-verity'          # verity is disabled.
 adb shell 'avbctl get-verification'    # verification is disabled.
 adb shell 'mount | grep dm-0'
 adb shell 'cat /proc/cmdline'</code></pre>
-<p>Bu cihazda vbmeta baÅŸlÄ±ÄŸÄ± <code>flags=0x3</code> (<code>HASHTREE_DISABLED | VERIFICATION_DISABLED</code>) bildiriyordu; bu yÃ¼zden <code>/system</code>'e yazmak boot'u bozmuyor.</p>
+<p>Bu cihazda vbmeta başlığı <code>flags=0x3</code> (<code>HASHTREE_DISABLED | VERIFICATION_DISABLED</code>) bildiriyordu; bu yüzden <code>/system</code>'e yazmak boot'u bozmuyor.</p>
 
-<h3>4.3 Host anahtarÄ±nÄ± Ã¶nceden yazma</h3>
-<p>Ekran olmadÄ±ÄŸÄ± iÃ§in â€œAllow USB debuggingâ€e basÄ±lamaz; PC anahtarÄ± Ã¶nceden yazÄ±lÄ±r:</p>
-<pre><code># adbkey.pub'un yalnÄ±zca ilk token'Ä± (base64) â€” "user@host" kÄ±smÄ± eklenmez
+<h3>4.3 Host anahtarını önceden yazma</h3>
+<p>Ekran olmadığı için “Allow USB debugging”e basılamaz; PC anahtarı önceden yazılır:</p>
+<pre><code># adbkey.pub'un yalnızca ilk token'ı (base64) — "user@host" kısmı eklenmez
 adb push adbkey.clean /data/misc/adb/adb_keys
 adb shell 'chmod 640 /data/misc/adb/adb_keys'
 adb shell 'chown system:shell /data/misc/adb/adb_keys'
 adb shell 'chcon u:object_r:adb_keys_file:s0 /data/misc/adb/adb_keys'</code></pre>
-<p>Sahiplik (<code>system:shell</code>), izin (<code>0640</code>) ve SELinux etiketi (<code>adb_keys_file</code>) Ã¶nemlidir; aksi hÃ¢lde adbd anahtarÄ± okumaz.</p>
+<p>Sahiplik (<code>system:shell</code>), izin (<code>0640</code>) ve SELinux etiketi (<code>adb_keys_file</code>) önemlidir; aksi hâlde adbd anahtarı okumaz.</p>
 
-<h3>4.4 Ä°lk deneme: settings_global.xml (ve neden tutmadÄ±)</h3>
-<p>Akla ilk gelen, <code>/data/system/users/0/settings_global.xml</code> iÃ§inde <code>adb_enabled</code> deÄŸerini deÄŸiÅŸtirmektir:</p>
+<h3>4.4 İlk deneme: settings_global.xml (ve neden tutmadı)</h3>
+<p>Akla ilk gelen, <code>/data/system/users/0/settings_global.xml</code> içinde <code>adb_enabled</code> değerini değiştirmektir:</p>
 <pre><code>&lt;setting id="39969" name="adb_enabled" value="0" package="android" defaultValue="0" defaultSysSet="true" /&gt;</code></pre>
-<p>DÃ¼zenlemeden sonra deÄŸer diskte <code>1</code> olur â€” ama bir sonraki aÃ§Ä±lÄ±ÅŸta dosya SettingsProvider tarafÄ±ndan yeniden yazÄ±lÄ±r: deÄŸer yine <code>0</code>, Ã¼stelik satÄ±rÄ±n <code>id</code> deÄŸeri her aÃ§Ä±lÄ±ÅŸta deÄŸiÅŸir (gÃ¶zlenen: 39969 â†’ 60862 â†’ 60864). Yeniden baÅŸlatmadan Ã¶nce <code>sync</code> Ã§ekmek de yetmedi. Ayar bu ROM'un aÃ§Ä±lÄ±ÅŸÄ±nda kalÄ±cÄ± olmuyor.</p>
+<p>Düzenlemeden sonra değer diskte <code>1</code> olur — ama bir sonraki açılışta dosya SettingsProvider tarafından yeniden yazılır: değer yine <code>0</code>, üstelik satırın <code>id</code> değeri her açılışta değişir (gözlenen: 39969 → 60862 → 60864). Yeniden başlatmadan önce <code>sync</code> çekmek de yetmedi. Ayar bu ROM'un açılışında kalıcı olmuyor.</p>
 
-<h3>4.5 Ã‡Ã¶zÃ¼m: aÃ§Ä±lÄ±ÅŸta Ã§alÄ±ÅŸan init script</h3>
-<p>AyarÄ±n boot tamamlandÄ±ktan <em>sonra</em> uygulanmasÄ± gerekir. Android init, <code>/system/etc/init/*.rc</code> dosyalarÄ±nÄ± ayrÄ±ÅŸtÄ±rÄ±r; kÃ¼Ã§Ã¼k bir script yeterlidir.</p>
+<h3>4.5 Çözüm: açılışta çalışan init script</h3>
+<p>Ayarın boot tamamlandıktan <em>sonra</em> uygulanması gerekir. Android init, <code>/system/etc/init/*.rc</code> dosyalarını ayrıştırır; küçük bir script yeterlidir.</p>
 <p><code>/system/etc/adb_boot.sh</code>:</p>
 <pre><code>#!/system/bin/sh
 i=0
@@ -127,71 +127,71 @@ setprop sys.usb.config mtp,adb</code></pre>
 on property:sys.boot_completed=1
     setprop sys.usb.config mtp,adb
     start adb_boot</code></pre>
-<p>Ä°zinleri ve etiketleri ayarlayÄ±p sync Ã§ekin, sonra yeniden baÅŸlatÄ±n:</p>
+<p>İzinleri ve etiketleri ayarlayıp sync çekin, sonra yeniden başlatın:</p>
 <pre><code>adb shell 'chmod 0755 /system/etc/adb_boot.sh &amp;&amp; chmod 0644 /system/etc/init/adb_boot.rc'
 adb shell 'chown root:root /system/etc/adb_boot.sh /system/etc/init/adb_boot.rc'
 adb shell 'chcon u:object_r:system_file:s0 /system/etc/adb_boot.sh /system/etc/init/adb_boot.rc'
 adb shell sync
 adb reboot</code></pre>
-<p>AÃ§Ä±lÄ±ÅŸtan ~20 saniye sonra <code>adb devices</code> telefonu <code>device</code> olarak gÃ¶sterir ve <code>settings get global adb_enabled</code> <code>1</code> dÃ¶ner.</p>
-<p>Ä°ki satÄ±r neden? <code>setprop sys.usb.config mtp,adb</code>, Qualcomm USB init bloÄŸunu tetikleyip PID'i <code>FF48</code> (MTP+ADB) yapar; <code>settings put</code> ise <code>UsbDeviceManager</code>'Ä±n adb'yi konfigÃ¼rasyonda tutmasÄ±nÄ± saÄŸlar.</p>
+<p>Açılıştan ~20 saniye sonra <code>adb devices</code> telefonu <code>device</code> olarak gösterir ve <code>settings get global adb_enabled</code> <code>1</code> döner.</p>
+<p>İki satır neden? <code>setprop sys.usb.config mtp,adb</code>, Qualcomm USB init bloğunu tetikleyip PID'i <code>FF48</code> (MTP+ADB) yapar; <code>settings put</code> ise <code>UsbDeviceManager</code>'ın adb'yi konfigürasyonda tutmasını sağlar.</p>
 
 <h3>4.6 scrcpy</h3>
 <pre><code>scrcpy -s db7ea5d1 --max-size 1200 --no-audio</code></pre>
 <ul>
 <li>Ekran PC'ye gelir; fare = dokunma, klavye = metin/PIN.</li>
-<li>Girdi ADB Ã¼zerinden enjekte edildiÄŸi iÃ§in dokunmatik panel olmasa da Ã§alÄ±ÅŸÄ±r.</li>
-<li>USB 2.0 Ã¼zerinde 1080Ã—2400, <code>--max-size 1200</code> ile daha akÄ±cÄ±dÄ±r.</li>
+<li>Girdi ADB üzerinden enjekte edildiği için dokunmatik panel olmasa da çalışır.</li>
+<li>USB 2.0 üzerinde 1080×2400, <code>--max-size 1200</code> ile daha akıcıdır.</li>
 </ul>
 
-<h2>5. Kilit ekranÄ±: FLAG_SECURE ve â€œdonmaâ€</h2>
-<p>Desen/PIN ekranÄ± <code>FLAG_SECURE</code> olarak iÅŸaretlidir. Android orada ekran gÃ¶rÃ¼ntÃ¼sÃ¼nÃ¼ ve ekran yakalamayÄ± engeller:</p>
+<h2>5. Kilit ekranı: FLAG_SECURE ve “donma”</h2>
+<p>Desen/PIN ekranı <code>FLAG_SECURE</code> olarak işaretlidir. Android orada ekran görüntüsünü ve ekran yakalamayı engeller:</p>
 <pre><code>SurfaceFlinger: FB is protected: PERMISSION_DENIED
 screencap: rc=1 (0 bytes)</code></pre>
-<p>Bu yÃ¼zden kimlik ekranÄ± aÃ§Ä±kken scrcpy son karede donar. Girdi ise engellenmez:</p>
+<p>Bu yüzden kimlik ekranı açıkken scrcpy son karede donar. Girdi ise engellenmez:</p>
 <ul>
-<li>PIN'i yazabilir veya deseni kÃ¶rlemesine Ã§izebilirsiniz (klavye ya da <code>input motionevent</code>);</li>
-<li>ya da kimlik bilgisini biliyorsanÄ±z tamamen kaldÄ±rabilirsiniz:</li>
+<li>PIN'i yazabilir veya deseni körlemesine çizebilirsiniz (klavye ya da <code>input motionevent</code>);</li>
+<li>ya da kimlik bilgisini biliyorsanız tamamen kaldırabilirsiniz:</li>
 </ul>
 <pre><code>adb shell 'locksettings clear --old &lt;desen&gt;'</code></pre>
-<p>3Ã—3 Ä±zgara klasik tuÅŸ takÄ±mÄ± gibi numaralÄ±dÄ±r (1 2 3 / 4 5 6 / 7 8 9); <code>--old</code> desenin nokta sÄ±rasÄ±dÄ±r. Kilit kalsÄ±n ama sÃ¼rekli sorulmasÄ±n isteniyorsa:</p>
+<p>3×3 ızgara klasik tuş takımı gibi numaralıdır (1 2 3 / 4 5 6 / 7 8 9); <code>--old</code> desenin nokta sırasıdır. Kilit kalsın ama sürekli sorulmasın isteniyorsa:</p>
 <pre><code>adb shell 'settings put system screen_off_timeout 2147483647'
 adb shell 'settings put secure lock_screen_lock_after_timeout 86400000'
 adb shell 'svc power stayon true'</code></pre>
 
-<h2>6. Yapay zeka asistanlarÄ± neden reddediyor â€” ve Ã§erÃ§eve dersi</h2>
-<p>Bu sÃ¼reÃ§te bir yapay zeka asistanÄ± isteÄŸi reddetti. Nedeni gÃ¶revin kendisi deÄŸil, kelime daÄŸarcÄ±ÄŸÄ±ydÄ±: Ã¶nceki mesajlarda <code>locksettings.db</code>, <code>gatekeeper</code>, <code>CE ÅŸifreleme</code>, <code>sendevent</code> geÃ§iyordu â€” bu kombinasyon bir kilit-bypass zinciri gibi okunur. Model, bu metinden â€œkendi cihazÄ±mÄ± kurtarÄ±yorumâ€ ile â€œbaÅŸkasÄ±nÄ±n cihazÄ±na eriÅŸiyorumâ€ arasÄ±ndaki farkÄ± ayÄ±ramaz; bu yÃ¼zden durur.</p>
-<p>AynÄ± gÃ¶rev dÃ¼z anlatÄ±ldÄ±ÄŸÄ±nda â€” â€œkendi telefonum, ekranÄ± yok, scrcpy ile kullanmak istiyorumâ€ â€” asistan yardÄ±m teklif etti.</p>
-<p>Ders yetenekle deÄŸil baÄŸlamla ilgili: kilit, ÅŸifreleme ve girdi enjeksiyonundan bahseden teknik bir metin, meÅŸru baÄŸlam aÃ§Ä±kÃ§a sÃ¶ylenene kadar yÃ¼ksek riskli sayÄ±lÄ±r.</p>
+<h2>6. Yapay zeka asistanları neden reddediyor — ve çerçeve dersi</h2>
+<p>Bu süreçte bir yapay zeka asistanı isteği reddetti. Nedeni görevin kendisi değil, kelime dağarcığıydı: önceki mesajlarda <code>locksettings.db</code>, <code>gatekeeper</code>, <code>CE şifreleme</code>, <code>sendevent</code> geçiyordu — bu kombinasyon bir kilit-bypass zinciri gibi okunur. Model, bu metinden “kendi cihazımı kurtarıyorum” ile “başkasının cihazına erişiyorum” arasındaki farkı ayıramaz; bu yüzden durur.</p>
+<p>Aynı görev düz anlatıldığında — “kendi telefonum, ekranı yok, scrcpy ile kullanmak istiyorum” — asistan yardım teklif etti.</p>
+<p>Ders yetenekle değil bağlamla ilgili: kilit, şifreleme ve girdi enjeksiyonundan bahseden teknik bir metin, meşru bağlam açıkça söylenene kadar yüksek riskli sayılır.</p>
 
-<h2>7. Riskler, sÄ±nÄ±rlar, geri alma</h2>
+<h2>7. Riskler, sınırlar, geri alma</h2>
 <ul>
-<li><strong>Verity aÃ§Ä±k mÄ±?</strong> <code>/system</code> deÄŸiÅŸikliÄŸi boot'u bozabilir. Ã–nce <code>avbctl get-verity</code> ile bakÄ±n.</li>
-<li><strong>ROM gÃ¼ncellemesi / factory reset</strong> init script'i ve <code>adb_keys</code>'i siler; kurulum tekrarlanmalÄ±dÄ±r.</li>
-<li><strong>USB kararsÄ±zlÄ±ÄŸÄ±</strong> bu cihazda sÄ±ktÄ±; farklÄ± kablo/port ve Windows â€œUSB seÃ§meli askÄ±ya almaâ€nÄ±n kapatÄ±lmasÄ± Ã¶nerilir.</li>
+<li><strong>Verity açık mı?</strong> <code>/system</code> değişikliği boot'u bozabilir. Önce <code>avbctl get-verity</code> ile bakın.</li>
+<li><strong>ROM güncellemesi / factory reset</strong> init script'i ve <code>adb_keys</code>'i siler; kurulum tekrarlanmalıdır.</li>
+<li><strong>USB kararsızlığı</strong> bu cihazda sıktı; farklı kablo/port ve Windows “USB seçmeli askıya alma”nın kapatılması önerilir.</li>
 <li><strong>Geri alma:</strong> <code>/system/etc/adb_boot.sh</code> ve <code>/system/etc/init/adb_boot.rc</code> silinip <code>sync</code> + reboot yeterlidir.</li>
-<li><strong>GÃ¼venlik:</strong> <code>adb_keys</code> + <code>adb_enabled=1</code>, kabloya fiziksel eriÅŸimi olan herkese shell aÃ§ar. YalnÄ±zca kontrolÃ¼nÃ¼zdeki cihazda tutun.</li>
+<li><strong>Güvenlik:</strong> <code>adb_keys</code> + <code>adb_enabled=1</code>, kabloya fiziksel erişimi olan herkese shell açar. Yalnızca kontrolünüzdeki cihazda tutun.</li>
 </ul>
 
-<h2>8. Kopyala-yapÄ±ÅŸtÄ±r komut Ã¶zeti</h2>
+<h2>8. Kopyala-yapıştır komut özeti</h2>
 <pre><code># 1) recovery'de root adb
 adb devices -l
 adb shell id
 
-# 2) verity kontrolÃ¼
+# 2) verity kontrolü
 adb shell 'avbctl get-verity'
 
-# 3) host anahtarÄ±
+# 3) host anahtarı
 adb push adbkey.clean /data/misc/adb/adb_keys
 adb shell 'chmod 640 /data/misc/adb/adb_keys; chown system:shell /data/misc/adb/adb_keys; chcon u:object_r:adb_keys_file:s0 /data/misc/adb/adb_keys'
 
-# 4) /system'i rw baÄŸla
+# 4) /system'i rw bağla
 adb shell 'mount -o rw /dev/block/dm-0 /system_root'
 
-# 5) /system/etc/adb_boot.sh ve /system/etc/init/adb_boot.rc dosyalarÄ±nÄ± oluÅŸtur (bkz. 4.5)
+# 5) /system/etc/adb_boot.sh ve /system/etc/init/adb_boot.rc dosyalarını oluştur (bkz. 4.5)
 adb shell sync
 
-# 6) reboot ve doÄŸrula
+# 6) reboot ve doğrula
 adb reboot
 adb devices -l
 adb shell 'settings get global adb_enabled'
@@ -200,11 +200,11 @@ adb shell 'settings get global adb_enabled'
 scrcpy -s db7ea5d1 --max-size 1200 --no-audio</code></pre>
 
 <h2>9. Anahtar kelimeler</h2>
-<p class="meta">ekranÄ± kÄ±rÄ±k telefon scrcpy Â· ekranÄ± olmayan android Â· adb_enabled boot script Â· android init rc settings put global Â· OrangeFox adb root Â· /data/misc/adb/adb_keys Â· Redmi Note 10 Pro sweet M2101K6G scrcpy Â· FLAG_SECURE screencap siyah Â· locksettings clear desen Â· input motionevent desen Â· verity disabled vbmeta flags 0x3 Â· sys.usb.config mtp,adb FF48</p>
+<p class="meta">ekranı kırık telefon scrcpy · ekranı olmayan android · adb_enabled boot script · android init rc settings put global · OrangeFox adb root · /data/misc/adb/adb_keys · Redmi Note 10 Pro sweet M2101K6G scrcpy · FLAG_SECURE screencap siyah · locksettings clear desen · input motionevent desen · verity disabled vbmeta flags 0x3 · sys.usb.config mtp,adb FF48</p>
 
 <hr>
 <footer>
-<p>2026-11-07'de yayÄ±nlandÄ±. Redmi Note 10 Pro (<code>sweet</code>), OrangeFox R12.1_3 ve Android 13 Ã¼zerinde test edildi. Riski size ait; yalnÄ±zca sahibi olduÄŸunuz veya yetkili olduÄŸunuz cihazlarda kullanÄ±n.</p>
+<p>2026-11-07'de yayınlandı. Redmi Note 10 Pro (<code>sweet</code>), OrangeFox R12.1_3 ve Android 13 üzerinde test edildi. Riski size ait; yalnızca sahibi olduğunuz veya yetkili olduğunuz cihazlarda kullanın.</p>
 </footer>
 </main>
 </body>

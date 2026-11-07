@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Control a Screenless Android Phone from a PC â€” adb + scrcpy (Redmi Note 10 Pro / OrangeFox)</title>
+<title>Control a Screenless Android Phone from a PC — adb + scrcpy (Redmi Note 10 Pro / OrangeFox)</title>
 <meta name="description" content="Step-by-step guide: control an Android phone with no display from a PC using adb and scrcpy. Enable adb at boot with an init script, pre-seed adb_keys, work around the FLAG_SECURE lockscreen freeze, and keep access across reboots.">
 <meta name="keywords" content="scrcpy, adb, broken screen android, screenless android, Redmi Note 10 Pro, sweet, M2101K6G, OrangeFox, adb_enabled, init rc, adb_keys, FLAG_SECURE, locksettings">
 <link rel="canonical" href="https://avsessisozx.github.io/ekransiz-android-scrcpy/">
@@ -28,15 +28,15 @@
 </head>
 <body>
 <main>
-<nav class="lang"><a href="tr/">TÃ¼rkÃ§e</a></nav>
+<nav class="lang"><a href="tr/">Türkçe</a></nav>
 
 <h1>Control a Screenless Android Phone from a PC with adb + scrcpy</h1>
-<p class="meta">Redmi Note 10 Pro (<code>sweet</code> / <code>M2101K6G</code>) Â· OrangeFox R12.1_3 Â· Android 13 Â· 2026-11-07</p>
+<p class="meta">Redmi Note 10 Pro (<code>sweet</code> / <code>M2101K6G</code>) · OrangeFox R12.1_3 · Android 13 · 2026-11-07</p>
 
 <p><strong>Scope:</strong> your own device, or a device you are authorized to service. The procedure does not bypass the lockscreen credential; it only opens an interaction window for a device whose display is physically gone.</p>
 
 <h2>Summary</h2>
-<p>A phone whose display panel has been removed can still be used from a PC with <strong>adb</strong> + <strong>scrcpy</strong>. The hard part is not scrcpy â€” it is getting adb to come up on a device whose ROM disables USB debugging at boot and whose screen cannot confirm the â€œAllow USB debuggingâ€ dialog.</p>
+<p>A phone whose display panel has been removed can still be used from a PC with <strong>adb</strong> + <strong>scrcpy</strong>. The hard part is not scrcpy — it is getting adb to come up on a device whose ROM disables USB debugging at boot and whose screen cannot confirm the “Allow USB debugging” dialog.</p>
 <p>This write-up shows the full path on a Redmi Note 10 Pro:</p>
 <ol>
 <li>root adb inside OrangeFox recovery (<code>ro.adb.secure=0</code>),</li>
@@ -48,7 +48,7 @@
 <p>Result: adb is back about 20 seconds after every boot, and the PC can mirror and control the phone while the cable is attached.</p>
 
 <h2>1. The problem</h2>
-<p>The display assembly is physically missing, so there is no touch input either. When the phone boots into Android, it enumerates as MTP only (<code>VID_2717&amp;PID_FF40</code>) â€” no ADB interface. The lockscreen is a pattern and is <code>FLAG_SECURE</code>, so screen capture of the credential UI is blocked.</p>
+<p>The display assembly is physically missing, so there is no touch input either. When the phone boots into Android, it enumerates as MTP only (<code>VID_2717&amp;PID_FF40</code>) — no ADB interface. The lockscreen is a pattern and is <code>FLAG_SECURE</code>, so screen capture of the credential UI is blocked.</p>
 <p>Goal: get the phone back into normal use and control it from the PC.</p>
 
 <h2>2. Device profile (what makes this work)</h2>
@@ -61,7 +61,7 @@
 <tr><td>Bootloader</td><td>unlocked (<code>verifiedbootstate=orange</code>)</td><td><code>/system</code> writable</td></tr>
 <tr><td>AVB / verity</td><td><strong>disabled</strong> (<code>vbmeta flags=0x3</code>)</td><td>safe to modify <code>/system</code></td></tr>
 <tr><td>Dynamic partitions</td><td><code>dm-0</code> system, <code>dm-1</code> vendor, <code>dm-2</code> product, <code>dm-5</code> userdata</td><td>mount targets</td></tr>
-<tr><td>USB config</td><td><code>sys.usb.config=mtp,adb</code> â†’ PID <code>FF48</code></td><td>exposes the ADB interface</td></tr>
+<tr><td>USB config</td><td><code>sys.usb.config=mtp,adb</code> → PID <code>FF48</code></td><td>exposes the ADB interface</td></tr>
 </tbody>
 </table>
 <p>If verity were enabled, the same method would not work as-is: you would first have to disable it (e.g. <code>avbctl disable-verity</code> / a patched vbmeta) or use Magisk.</p>
@@ -69,8 +69,8 @@
 <h2>3. Tools</h2>
 <ul>
 <li><strong>adb</strong> (platform-tools)</li>
-<li><strong>scrcpy 5.0.1</strong> â€” screen mirroring and input</li>
-<li><strong>OrangeFox recovery</strong> â€” root adb and <code>/system</code> access</li>
+<li><strong>scrcpy 5.0.1</strong> — screen mirroring and input</li>
+<li><strong>OrangeFox recovery</strong> — root adb and <code>/system</code> access</li>
 <li>standard Android shell tools: <code>avbctl</code>, <code>mount</code>, <code>settings</code>, <code>locksettings</code>, <code>input</code>, <code>screencap</code></li>
 </ul>
 
@@ -91,8 +91,8 @@ adb shell 'cat /proc/cmdline'</code></pre>
 <p>On this device the vbmeta header reported <code>flags=0x3</code> (<code>HASHTREE_DISABLED | VERIFICATION_DISABLED</code>), so writing to <code>/system</code> does not break the boot.</p>
 
 <h3>4.3 Pre-seed the host key</h3>
-<p>You cannot tap â€œAllow USB debuggingâ€ on a missing screen, so the PC key is written in advance:</p>
-<pre><code># only the first token (base64) of adbkey.pub â€” no "user@host"
+<p>You cannot tap “Allow USB debugging” on a missing screen, so the PC key is written in advance:</p>
+<pre><code># only the first token (base64) of adbkey.pub — no "user@host"
 adb push adbkey.clean /data/misc/adb/adb_keys
 adb shell 'chmod 640 /data/misc/adb/adb_keys'
 adb shell 'chown system:shell /data/misc/adb/adb_keys'
@@ -102,10 +102,10 @@ adb shell 'chcon u:object_r:adb_keys_file:s0 /data/misc/adb/adb_keys'</code></pr
 <h3>4.4 First attempt: editing settings_global.xml (and why it failed)</h3>
 <p>The obvious approach is to flip <code>adb_enabled</code> in <code>/data/system/users/0/settings_global.xml</code>:</p>
 <pre><code>&lt;setting id="39969" name="adb_enabled" value="0" package="android" defaultValue="0" defaultSysSet="true" /&gt;</code></pre>
-<p>After the edit the value is <code>1</code> on disk â€” but on the next boot the file is rewritten by SettingsProvider: the value is back to <code>0</code>, and the row id changes every boot (observed: 39969 â†’ 60862 â†’ 60864). Even <code>sync</code> before rebooting did not help. The setting simply does not survive this ROMâ€™s boot.</p>
+<p>After the edit the value is <code>1</code> on disk — but on the next boot the file is rewritten by SettingsProvider: the value is back to <code>0</code>, and the row id changes every boot (observed: 39969 → 60862 → 60864). Even <code>sync</code> before rebooting did not help. The setting simply does not survive this ROM’s boot.</p>
 
 <h3>4.5 The fix: an init script that runs at boot</h3>
-<p>The setting has to be applied <em>after</em> boot completes. Androidâ€™s init parses <code>/system/etc/init/*.rc</code>, so a small script is enough.</p>
+<p>The setting has to be applied <em>after</em> boot completes. Android’s init parses <code>/system/etc/init/*.rc</code>, so a small script is enough.</p>
 <p><code>/system/etc/adb_boot.sh</code>:</p>
 <pre><code>#!/system/bin/sh
 i=0
@@ -141,10 +141,10 @@ adb reboot</code></pre>
 <ul>
 <li>The screen appears on the PC; mouse = touch, keyboard = text/PIN.</li>
 <li>Input is injected through ADB, so it works even though the touch panel is gone.</li>
-<li>1080Ã—2400 over USB 2.0 is smoother with <code>--max-size 1200</code>.</li>
+<li>1080×2400 over USB 2.0 is smoother with <code>--max-size 1200</code>.</li>
 </ul>
 
-<h2>5. The lockscreen: FLAG_SECURE and the â€œfreezeâ€</h2>
+<h2>5. The lockscreen: FLAG_SECURE and the “freeze”</h2>
 <p>The pattern/PIN screen is marked <code>FLAG_SECURE</code>. Android blocks screenshots and screen capture there:</p>
 <pre><code>SurfaceFlinger: FB is protected: PERMISSION_DENIED
 screencap: rc=1 (0 bytes)</code></pre>
@@ -154,21 +154,21 @@ screencap: rc=1 (0 bytes)</code></pre>
 <li>or remove the credential entirely if you know it:</li>
 </ul>
 <pre><code>adb shell 'locksettings clear --old &lt;pattern&gt;'</code></pre>
-<p>The 3Ã—3 grid is numbered like a classic keypad (1 2 3 / 4 5 6 / 7 8 9); <code>--old</code> is the dot sequence. To keep the lock but stop it from re-engaging:</p>
+<p>The 3×3 grid is numbered like a classic keypad (1 2 3 / 4 5 6 / 7 8 9); <code>--old</code> is the dot sequence. To keep the lock but stop it from re-engaging:</p>
 <pre><code>adb shell 'settings put system screen_off_timeout 2147483647'
 adb shell 'settings put secure lock_screen_lock_after_timeout 86400000'
 adb shell 'svc power stayon true'</code></pre>
 
-<h2>6. Why AI assistants refuse â€” and the framing lesson</h2>
-<p>During this work an AI assistant refused the request. The reason was not the task itself but the vocabulary: earlier messages contained <code>locksettings.db</code>, <code>gatekeeper</code>, <code>CE encryption</code>, <code>sendevent</code> â€” a combination that reads like a lockscreen-bypass chain. The model cannot tell â€œrecovering my own deviceâ€ from â€œaccessing someone elseâ€™s deviceâ€ out of that text alone, so it stops.</p>
-<p>When the same task was stated plainly â€” â€œmy own phone, the screen is gone, I want to use scrcpyâ€ â€” the assistant offered help.</p>
+<h2>6. Why AI assistants refuse — and the framing lesson</h2>
+<p>During this work an AI assistant refused the request. The reason was not the task itself but the vocabulary: earlier messages contained <code>locksettings.db</code>, <code>gatekeeper</code>, <code>CE encryption</code>, <code>sendevent</code> — a combination that reads like a lockscreen-bypass chain. The model cannot tell “recovering my own device” from “accessing someone else’s device” out of that text alone, so it stops.</p>
+<p>When the same task was stated plainly — “my own phone, the screen is gone, I want to use scrcpy” — the assistant offered help.</p>
 <p>The lesson is about context, not capability. Description matters: a technical transcript that mentions locks, encryption and input injection will be treated as high-risk until the legitimate context is explicit.</p>
 
 <h2>7. Risks, limits, rollback</h2>
 <ul>
 <li><strong>Verity enabled?</strong> Modifying <code>/system</code> can break the boot. Check <code>avbctl get-verity</code> first.</li>
 <li><strong>ROM update / factory reset</strong> removes the init script and <code>adb_keys</code>; redo the setup.</li>
-<li><strong>USB instability</strong> was frequent on this device; try another cable/port and disable Windows â€œUSB selective suspendâ€.</li>
+<li><strong>USB instability</strong> was frequent on this device; try another cable/port and disable Windows “USB selective suspend”.</li>
 <li><strong>Rollback:</strong> delete <code>/system/etc/adb_boot.sh</code> and <code>/system/etc/init/adb_boot.rc</code>, then <code>sync</code> and reboot.</li>
 <li><strong>Security:</strong> <code>adb_keys</code> + <code>adb_enabled=1</code> gives anyone with physical cable access a shell. Only keep it on a device you control.</li>
 </ul>
@@ -200,7 +200,7 @@ adb shell 'settings get global adb_enabled'
 scrcpy -s db7ea5d1 --max-size 1200 --no-audio</code></pre>
 
 <h2>9. Keywords</h2>
-<p class="meta">scrcpy broken screen Â· screenless android Â· adb_enabled boot script Â· android init rc settings put global Â· OrangeFox adb root Â· /data/misc/adb/adb_keys Â· Redmi Note 10 Pro sweet M2101K6G scrcpy Â· FLAG_SECURE screencap black Â· locksettings clear pattern Â· input motionevent pattern Â· verity disabled vbmeta flags 0x3 Â· sys.usb.config mtp,adb FF48</p>
+<p class="meta">scrcpy broken screen · screenless android · adb_enabled boot script · android init rc settings put global · OrangeFox adb root · /data/misc/adb/adb_keys · Redmi Note 10 Pro sweet M2101K6G scrcpy · FLAG_SECURE screencap black · locksettings clear pattern · input motionevent pattern · verity disabled vbmeta flags 0x3 · sys.usb.config mtp,adb FF48</p>
 
 <hr>
 <footer>

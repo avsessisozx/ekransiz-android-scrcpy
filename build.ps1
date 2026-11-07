@@ -4,8 +4,8 @@
   Usage (PowerShell):
     .\build.ps1 -BaseUrl "https://kullanici.github.io/ekransiz-android-scrcpy/"
 
-  Then upload the contents of this folder to GitHub Pages, Cloudflare Pages,
-  Netlify, or any static host.
+  Reads and writes explicit UTF-8 (no BOM) so Turkish/Unicode text is not
+  re-encoded by the console code page.
 #>
 param(
     [Parameter(Mandatory = $true)]
@@ -16,6 +16,7 @@ if (-not $BaseUrl.EndsWith('/')) { $BaseUrl += '/' }
 
 $old  = 'https://USERNAME.github.io/ekransiz-android-scrcpy/'
 $root = $PSScriptRoot
+$utf8 = New-Object System.Text.UTF8Encoding($false)
 
 $files = Get-ChildItem -Path $root -Recurse -File | Where-Object {
     $_.Extension -in '.html', '.xml', '.txt', '.md'
@@ -23,10 +24,10 @@ $files = Get-ChildItem -Path $root -Recurse -File | Where-Object {
 
 $changed = 0
 foreach ($f in $files) {
-    $c = Get-Content -Path $f.FullName -Raw
+    $c = [System.IO.File]::ReadAllText($f.FullName, [System.Text.Encoding]::UTF8)
     if ($c -and $c.Contains($old)) {
         $c = $c.Replace($old, $BaseUrl)
-        Set-Content -Path $f.FullName -Value $c -NoNewline -Encoding utf8
+        [System.IO.File]::WriteAllText($f.FullName, $c, $utf8)
         Write-Output ("updated: " + $f.FullName)
         $changed++
     }

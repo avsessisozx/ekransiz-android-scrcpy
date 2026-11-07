@@ -1,20 +1,20 @@
-﻿# EkranÄ± Olmayan Android â†’ PC (adb + scrcpy)
+# Ekranı Olmayan Android → PC (adb + scrcpy)
 
-Fiziksel ekranÄ± sÃ¶kÃ¼lmÃ¼ÅŸ bir Android telefonu PC'den, USB Ã¼zerinden **adb** + **scrcpy** ile kontrol etme rehberi â€” ROM her aÃ§Ä±lÄ±ÅŸta USB hata ayÄ±klamayÄ± kapatsa bile.
+Fiziksel ekranı sökülmüş bir Android telefonu PC'den, USB üzerinden **adb** + **scrcpy** ile kontrol etme rehberi — ROM her açılışta USB hata ayıklamayı kapatsa bile.
 
-**Test edilen cihaz:** Xiaomi Redmi Note 10 Pro (`sweet` / `M2101K6G`), OrangeFox R12.1_3, Android 13 (`TQ3A.230901.001.B1`, userdebug), verity kapalÄ± (`vbmeta flags=0x3`).
+**Test edilen cihaz:** Xiaomi Redmi Note 10 Pro (`sweet` / `M2101K6G`), OrangeFox R12.1_3, Android 13 (`TQ3A.230901.001.B1`, userdebug), verity kapalı (`vbmeta flags=0x3`).
 
-ğŸ“„ **Makale:** [TÃ¼rkÃ§e](https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/) Â· [English](https://avsessisozx.github.io/ekransiz-android-scrcpy/)
+g��� **Makale:** [Türkçe](https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/) · [English](https://avsessisozx.github.io/ekransiz-android-scrcpy/)
 
 ---
 
-## KÄ±sa Ã¶zet
+## Kısa özet
 
-1. **OrangeFox recovery**'ye gir (GÃ¼Ã§ + Ses AÃ§ma). Recovery adbd'si `ro.adb.secure=0` ile Ã§alÄ±ÅŸÄ±r; root shell alÄ±rsÄ±n.
-2. `/system`'e dokunmadan Ã¶nce verity'nin kapalÄ± olduÄŸunu doÄŸrula (`avbctl get-verity`).
-3. PC anahtarÄ±nÄ± `/data/misc/adb/adb_keys` dosyasÄ±na yaz (`system:shell`, `0640`, etiket `adb_keys_file`).
-4. `settings_global.xml` iÃ§inde `adb_enabled` dÃ¼zenlemesi **aÃ§Ä±lÄ±ÅŸta kalÄ±cÄ± olmaz** â€” SettingsProvider dosyayÄ± yeniden yazar, deÄŸer `0`'a dÃ¶ner.
-5. Ã‡Ã¶zÃ¼m: `sys.boot_completed` anÄ±nda Ã§alÄ±ÅŸan bir **init script**:
+1. **OrangeFox recovery**'ye gir (Güç + Ses Açma). Recovery adbd'si `ro.adb.secure=0` ile çalışır; root shell alırsın.
+2. `/system`'e dokunmadan önce verity'nin kapalı olduğunu doğrula (`avbctl get-verity`).
+3. PC anahtarını `/data/misc/adb/adb_keys` dosyasına yaz (`system:shell`, `0640`, etiket `adb_keys_file`).
+4. `settings_global.xml` içinde `adb_enabled` düzenlemesi **açılışta kalıcı olmaz** — SettingsProvider dosyayı yeniden yazar, değer `0`'a döner.
+5. Çözüm: `sys.boot_completed` anında çalışan bir **init script**:
 
 ```sh
 # /system/etc/adb_boot.sh
@@ -44,20 +44,20 @@ on property:sys.boot_completed=1
 ```
 
 6. `chmod` / `chown` / `chcon u:object_r:system_file:s0`, `sync`, reboot. ~20 sn sonra adb geri gelir.
-7. GÃ¶rÃ¼ntÃ¼ ve kontrol:
+7. Görüntü ve kontrol:
 
 ```bash
 scrcpy -s <seri-no> --max-size 1200 --no-audio
 ```
 
-## Kilit ekranÄ± notu
+## Kilit ekranı notu
 
-Desen/PIN ekranÄ± `FLAG_SECURE`'dÄ±r; ekran gÃ¶rÃ¼ntÃ¼sÃ¼ siyah dÃ¶ner veya baÅŸarÄ±sÄ±z olur (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy o ekranda donar â€” ama girdi Ã§alÄ±ÅŸÄ±r, kimlik bilgisi kÃ¶rlemesine girilebilir. Bu proje kimlik bilgisini **atlamaz**; kilidi aÃ§mak iÃ§in yine desen/PIN gerekir.
+Desen/PIN ekranı `FLAG_SECURE`'dır; ekran görüntüsü siyah döner veya başarısız olur (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy o ekranda donar — ama girdi çalışır, kimlik bilgisi körlemesine girilebilir. Bu proje kimlik bilgisini **atlamaz**; kilidi açmak için yine desen/PIN gerekir.
 
 ## Anahtar kelimeler
 
-ekranÄ± kÄ±rÄ±k telefon scrcpy Â· ekranÄ± olmayan android Â· adb_enabled boot script Â· android init rc Â· OrangeFox adb root Â· `/data/misc/adb/adb_keys` Â· Redmi Note 10 Pro sweet M2101K6G Â· FLAG_SECURE screencap Â· locksettings clear desen Â· `input motionevent` Â· verity disabled vbmeta Â· `sys.usb.config=mtp,adb`
+ekranı kırık telefon scrcpy · ekranı olmayan android · adb_enabled boot script · android init rc · OrangeFox adb root · `/data/misc/adb/adb_keys` · Redmi Note 10 Pro sweet M2101K6G · FLAG_SECURE screencap · locksettings clear desen · `input motionevent` · verity disabled vbmeta · `sys.usb.config=mtp,adb`
 
-## UyarÄ±
+## Uyarı
 
-YalnÄ±zca sahibi olduÄŸunuz veya yetkili olduÄŸunuz cihazlarda kullanÄ±n. `/system` deÄŸiÅŸikliÄŸi boot'u bozabilir; Ã¶nce verity'yi kontrol edin.
+Yalnızca sahibi olduğunuz veya yetkili olduğunuz cihazlarda kullanın. `/system` değişikliği boot'u bozabilir; önce verity'yi kontrol edin.

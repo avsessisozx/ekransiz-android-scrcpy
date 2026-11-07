@@ -1,10 +1,10 @@
-﻿# Screenless Android â†’ PC over adb + scrcpy
+# Screenless Android → PC over adb + scrcpy
 
-How to regain control of an Android phone whose display is physically gone â€” from a PC, over USB, with **adb** and **scrcpy** â€” on a device whose ROM keeps disabling USB debugging at boot.
+How to regain control of an Android phone whose display is physically gone — from a PC, over USB, with **adb** and **scrcpy** — on a device whose ROM keeps disabling USB debugging at boot.
 
 **Tested on:** Xiaomi Redmi Note 10 Pro (`sweet` / `M2101K6G`), OrangeFox R12.1_3, Android 13 (`TQ3A.230901.001.B1`, userdebug), verity disabled (`vbmeta flags=0x3`).
 
-ğŸ“„ **Full write-up:** [English](https://avsessisozx.github.io/ekransiz-android-scrcpy/) Â· [TÃ¼rkÃ§e](https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/)
+g��� **Full write-up:** [English](https://avsessisozx.github.io/ekransiz-android-scrcpy/) · [Türkçe](https://avsessisozx.github.io/ekransiz-android-scrcpy/tr/)
 
 ---
 
@@ -13,7 +13,7 @@ How to regain control of an Android phone whose display is physically gone â€
 1. Boot **OrangeFox recovery** (Power + Volume Up). Recovery adbd runs with `ro.adb.secure=0`, so you get a root shell.
 2. Check that verity is off before touching `/system` (`avbctl get-verity`).
 3. Pre-seed the PC key into `/data/misc/adb/adb_keys` (`system:shell`, `0640`, label `adb_keys_file`).
-4. Editing `adb_enabled` in `settings_global.xml` **does not survive boot** â€” SettingsProvider rewrites the file and the value reverts to `0`.
+4. Editing `adb_enabled` in `settings_global.xml` **does not survive boot** — SettingsProvider rewrites the file and the value reverts to `0`.
 5. The fix: an **init script** in `/system/etc/init` that runs at `sys.boot_completed`:
 
 ```sh
@@ -52,11 +52,11 @@ scrcpy -s <serial> --max-size 1200 --no-audio
 
 ## The lockscreen caveat
 
-The pattern/PIN screen is `FLAG_SECURE`, so screenshots and screen capture return black or fail (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy shows a frozen frame there â€” input still works, so the credential can be typed blind. This project does **not** bypass the credential; you still need it to unlock.
+The pattern/PIN screen is `FLAG_SECURE`, so screenshots and screen capture return black or fail (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy shows a frozen frame there — input still works, so the credential can be typed blind. This project does **not** bypass the credential; you still need it to unlock.
 
 ## Keywords
 
-scrcpy broken screen Â· screenless android Â· adb_enabled boot script Â· android init rc Â· OrangeFox adb root Â· `/data/misc/adb/adb_keys` Â· Redmi Note 10 Pro sweet M2101K6G Â· FLAG_SECURE screencap Â· locksettings clear Â· `input motionevent` Â· verity disabled vbmeta Â· `sys.usb.config=mtp,adb`
+scrcpy broken screen · screenless android · adb_enabled boot script · android init rc · OrangeFox adb root · `/data/misc/adb/adb_keys` · Redmi Note 10 Pro sweet M2101K6G · FLAG_SECURE screencap · locksettings clear · `input motionevent` · verity disabled vbmeta · `sys.usb.config=mtp,adb`
 
 ## Disclaimer
 
