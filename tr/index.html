@@ -47,6 +47,25 @@
 </ol>
 <p>Sonuç: her açılıştan ~20 saniye sonra adb geri gelir; kablo takılı olduğu sürece PC'den görüntü ve kontrol mümkündür.</p>
 
+<h2>Bu rehberin farkı — neyi ekliyor?</h2>
+<p>Mevcut “ekransız Android” projeleri — örneğin <a href="https://github.com/Vighnesh2514/screenless-android">Vighnesh2514/screenless-android</a> — USB hata ayıklamanın <em>zaten açık</em> olduğunu ve telefonda “Allow”a basılabildiğini varsayar; başlatıcı, kablosuz mod, hız ayarı ve otomasyona odaklanır. Bu yazı tam tersi durumu ele alıyor:</p>
+<ul>
+<li><strong>USB hata ayıklama kapalı veya her açılışta sıfırlanıyor</strong> — ROM <code>adb_enabled</code> değerini yeniden yazıyor (satır id’si her açılışta değişti: 39969 → 60862 → 60864).</li>
+<li><strong>Kullanılabilir ekran yok</strong> — “Allow USB debugging” diyaloğuna asla basılamıyor.</li>
+<li><strong>Magisk yok, Android’de root yok</strong> — çözüm <code>/system/etc/init</code> altında ve <code>sys.boot_completed</code> anında çalışıyor.</li>
+</ul>
+<p>Somut ve tekrarlanabilir bulgular:</p>
+<table>
+<thead><tr><th>Bulgu</th><th>Kanıt</th></tr></thead>
+<tbody>
+<tr><td><code>adb_enabled</code> açılışta yeniden yazılıyor</td><td><code>settings_global.xml</code> değeri <code>0</code>’a dönüyor; ayarın satır id’si her açılışta değişiyor</td></tr>
+<tr><td>Verity durumu <code>/system</code>’in yazılabilirliğini belirliyor</td><td><code>avbctl get-verity</code> → <code>verity is disabled</code>; vbmeta <code>flags=0x3</code></td></tr>
+<tr><td><code>adb_keys</code> için tam sahiplik, izin ve etiket şart</td><td><code>system:shell</code>, <code>0640</code>, <code>u:object_r:adb_keys_file:s0</code></td></tr>
+<tr><td>Tek boot script hem ayarı hem USB yapılandırmasını ayarlamalı</td><td><code>settings put global adb_enabled 1</code> + <code>setprop sys.usb.config mtp,adb</code> → PID <code>FF48</code></td></tr>
+<tr><td>Kilit ekranı kimlik arayüzü <code>FLAG_SECURE</code></td><td><code>screencap</code> rc=1; <code>SurfaceFlinger: FB is protected</code>; girdi yine çalışıyor</td></tr>
+<tr><td>Recovery adbd’si yetkilendirme istemiyor</td><td><code>ro.adb.secure=0</code>, root shell (<code>u:r:su:s0</code>)</td></tr>
+</tbody>
+</table>
 <h2>1. Problem</h2>
 <p>Ekran montajı fiziksel olarak yok; dolayısıyla dokunmatik de yok. Telefon Android'e açıldığında USB'de yalnızca MTP olarak görünüyor (<code>VID_2717&amp;PID_FF40</code>) — ADB arayüzü yok. Kilit ekranı desenli ve <code>FLAG_SECURE</code> olduğu için kimlik ekranının görüntüsü alınamıyor.</p>
 <p>Hedef: telefonu normal kullanıma döndürmek ve PC'den kontrol etmek.</p>
@@ -199,6 +218,9 @@ adb shell 'settings get global adb_enabled'
 # 7) scrcpy
 scrcpy -s db7ea5d1 --max-size 1200 --no-audio</code></pre>
 
+<h2>İlgili çalışmalar</h2>
+<p><a href="https://github.com/Vighnesh2514/screenless-android">Vighnesh2514/screenless-android</a> (MIT, Vighnesh2514 tarafından, Claude ile geliştirildi) daha cilalı ve genel amaçlı seçenek: tek tık başlatıcı, USB/Wi‑Fi geçişi, yönetici izni istemeyen Windows kurulumu, hız ayarları ve deneysel telefon ajanı. USB hata ayıklama zaten açıksa ve telefon yeni bir anahtarı kabul edebiliyorsa o projeyi kullanın — o iş için daha iyi araç.</p>
+<p>Bu rehber tamamlayıcıdır: telefon anahtar kabul edemiyorsa ve ROM adb’yi sürekli kapatıyorsa ne yapılacağını anlatır. Burada o projeden hiç kod kullanılmadı. İkisi de Google’ın <a href="https://developer.android.com/tools/adb">adb</a> ve Genymobile’in <a href="https://github.com/Genymobile/scrcpy">scrcpy</a> araçları üzerine kurulu.</p>
 <h2>9. Anahtar kelimeler</h2>
 <p class="meta">ekranı kırık telefon scrcpy · ekranı olmayan android · adb_enabled boot script · android init rc settings put global · OrangeFox adb root · /data/misc/adb/adb_keys · Redmi Note 10 Pro sweet M2101K6G scrcpy · FLAG_SECURE screencap siyah · locksettings clear desen · input motionevent desen · verity disabled vbmeta flags 0x3 · sys.usb.config mtp,adb FF48</p>
 

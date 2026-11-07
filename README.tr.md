@@ -50,6 +50,17 @@ on property:sys.boot_completed=1
 scrcpy -s <seri-no> --max-size 1200 --no-audio
 ```
 
+## Mevcut araçlardan farkı
+
+[Vighnesh2514/screenless-android](https://github.com/Vighnesh2514/screenless-android) (MIT) cilalı, genel amaçlı seçenek: tek tık başlatıcı, USB/Wi‑Fi geçişi, yönetici izni istemeyen Windows kurulumu, hız ayarları ve ajan. **USB hata ayıklamanın zaten açık** olduğunu ve telefonun yeni anahtarı kabul edebildiğini varsayar (bir kez “Allow”). Bu senaryo sizde geçerliyse onu kullanın — o iş için daha iyi araç.
+
+Bu repo tam tersi durumu ele alıyor:
+
+- ROM **her açılışta `adb_enabled` değerini sıfırlıyor** (satır id’si: 39969 → 60862 → 60864);
+- **kullanılabilir ekran yok**, dolayısıyla “Allow” diyaloğu onaylanamıyor;
+- **Magisk yok**, bu yüzden çözüm `/system/etc/init` altında `sys.boot_completed` anında çalışan bir init script.
+
+Burada o projeden hiç kod kullanılmadı. İkisi de Google'ın adb ve Genymobile'in scrcpy araçları üzerine kurulu.
 ## Kilit ekranı notu
 
 Desen/PIN ekranı `FLAG_SECURE`'dır; ekran görüntüsü siyah döner veya başarısız olur (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy o ekranda donar — ama girdi çalışır, kimlik bilgisi körlemesine girilebilir. Bu proje kimlik bilgisini **atlamaz**; kilidi açmak için yine desen/PIN gerekir.

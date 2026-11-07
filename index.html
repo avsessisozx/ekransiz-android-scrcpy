@@ -47,6 +47,25 @@
 </ol>
 <p>Result: adb is back about 20 seconds after every boot, and the PC can mirror and control the phone while the cable is attached.</p>
 
+<h2>What this guide adds — and how it differs</h2>
+<p>Existing “screenless Android” projects — for example <a href="https://github.com/Vighnesh2514/screenless-android">Vighnesh2514/screenless-android</a> — assume USB debugging is <em>already enabled</em> and that someone can tap “Allow” on the phone; they focus on launchers, wireless mode, tuning and automation. This write-up covers the opposite case:</p>
+<ul>
+<li><strong>USB debugging is off or reset on every boot</strong> — the ROM rewrites <code>adb_enabled</code> (the setting’s row id changed on every boot: 39969 → 60862 → 60864).</li>
+<li><strong>No usable display</strong> — the “Allow USB debugging” dialog can never be tapped.</li>
+<li><strong>No Magisk, no root in Android</strong> — the fix lives in <code>/system/etc/init</code> and runs at <code>sys.boot_completed</code>.</li>
+</ul>
+<p>Concrete, reproducible findings:</p>
+<table>
+<thead><tr><th>Finding</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td><code>adb_enabled</code> is rewritten at boot</td><td><code>settings_global.xml</code> reverts to <code>0</code>; the row id changes each boot</td></tr>
+<tr><td>Verity state decides whether <code>/system</code> is editable</td><td><code>avbctl get-verity</code> → <code>verity is disabled</code>; vbmeta <code>flags=0x3</code></td></tr>
+<tr><td><code>adb_keys</code> needs exact owner, mode and label</td><td><code>system:shell</code>, <code>0640</code>, <code>u:object_r:adb_keys_file:s0</code></td></tr>
+<tr><td>One boot script must set both the setting and the USB config</td><td><code>settings put global adb_enabled 1</code> + <code>setprop sys.usb.config mtp,adb</code> → PID <code>FF48</code></td></tr>
+<tr><td>The lockscreen credential UI is <code>FLAG_SECURE</code></td><td><code>screencap</code> rc=1; <code>SurfaceFlinger: FB is protected</code>; input still works</td></tr>
+<tr><td>Recovery adbd needs no authorization</td><td><code>ro.adb.secure=0</code>, root shell (<code>u:r:su:s0</code>)</td></tr>
+</tbody>
+</table>
 <h2>1. The problem</h2>
 <p>The display assembly is physically missing, so there is no touch input either. When the phone boots into Android, it enumerates as MTP only (<code>VID_2717&amp;PID_FF40</code>) — no ADB interface. The lockscreen is a pattern and is <code>FLAG_SECURE</code>, so screen capture of the credential UI is blocked.</p>
 <p>Goal: get the phone back into normal use and control it from the PC.</p>
@@ -199,6 +218,9 @@ adb shell 'settings get global adb_enabled'
 # 7) scrcpy
 scrcpy -s db7ea5d1 --max-size 1200 --no-audio</code></pre>
 
+<h2>Related work</h2>
+<p><a href="https://github.com/Vighnesh2514/screenless-android">Vighnesh2514/screenless-android</a> (MIT, by Vighnesh2514, built with Claude) is the more polished, general-purpose option: one-click launcher, USB/Wi‑Fi switching, a Windows installer that needs no admin rights, tuning and an experimental phone agent. If USB debugging is already on and the phone can accept a new key, use that project — it is the better tool for that job.</p>
+<p>This guide is complementary: it documents what to do when the phone cannot accept a key and the ROM keeps turning adb off. No code from that project is used here. Both build on Google’s <a href="https://developer.android.com/tools/adb">adb</a> and Genymobile’s <a href="https://github.com/Genymobile/scrcpy">scrcpy</a>.</p>
 <h2>9. Keywords</h2>
 <p class="meta">scrcpy broken screen · screenless android · adb_enabled boot script · android init rc settings put global · OrangeFox adb root · /data/misc/adb/adb_keys · Redmi Note 10 Pro sweet M2101K6G scrcpy · FLAG_SECURE screencap black · locksettings clear pattern · input motionevent pattern · verity disabled vbmeta flags 0x3 · sys.usb.config mtp,adb FF48</p>
 

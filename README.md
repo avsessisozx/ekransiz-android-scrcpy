@@ -50,6 +50,17 @@ on property:sys.boot_completed=1
 scrcpy -s <serial> --max-size 1200 --no-audio
 ```
 
+## How this differs from existing tools
+
+[Vighnesh2514/screenless-android](https://github.com/Vighnesh2514/screenless-android) (MIT) is the polished, general-purpose option: one-click launcher, USB/Wi‑Fi switching, a no-admin Windows install, tuning and an agent. It assumes **USB debugging is already on** and that the phone can accept a new key (tap “Allow” once). If that is your case, use it — it is the better tool for that job.
+
+This repo covers the opposite case:
+
+- the ROM **resets `adb_enabled` on every boot** (row id churn: 39969 → 60862 → 60864);
+- there is **no usable display**, so the “Allow” dialog can never be confirmed;
+- there is **no Magisk**, so the fix is an init script in `/system/etc/init` that runs at `sys.boot_completed`.
+
+No code from that project is used here. Both build on Google's adb and Genymobile's scrcpy.
 ## The lockscreen caveat
 
 The pattern/PIN screen is `FLAG_SECURE`, so screenshots and screen capture return black or fail (`SurfaceFlinger: FB is protected: PERMISSION_DENIED`). scrcpy shows a frozen frame there — input still works, so the credential can be typed blind. This project does **not** bypass the credential; you still need it to unlock.
